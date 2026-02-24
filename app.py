@@ -1,8 +1,6 @@
-import os
 import re
 import string
 
-import kagglehub
 import matplotlib.pyplot as plt
 import nltk
 import numpy as np
@@ -66,8 +64,12 @@ PREPROCESS = {"Stemming": stem_text, "Lemmatization": lemma_text}
 # ── Data loading ──────────────────────────────────────────────────────────────
 @st.cache_data(show_spinner=False)
 def load_df(n: int) -> pd.DataFrame:
-    path = kagglehub.dataset_download("lakshmi25npathi/imdb-dataset-of-50k-movie-reviews")
-    df   = pd.read_csv(os.path.join(path, "IMDB Dataset.csv"))
+    from datasets import load_dataset
+    ds = load_dataset("stanfordnlp/imdb", split="train+test", trust_remote_code=False)
+    df = pd.DataFrame({
+        "review":    ds["text"],
+        "sentiment": ["positive" if l == 1 else "negative" for l in ds["label"]],
+    })
     return df.iloc[:n] if n else df
 
 # ── Model pipeline ────────────────────────────────────────────────────────────

@@ -6,4 +6,4 @@ scikit-learn
 wordcloud
 matplotlib
 plotly
-kagglehub
+datasets
