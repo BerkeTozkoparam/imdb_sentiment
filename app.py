@@ -1,3 +1,4 @@
+import os
 import re
 import string
 
@@ -62,14 +63,11 @@ def lemma_text(text: str) -> str:
 PREPROCESS = {"Stemming": stem_text, "Lemmatization": lemma_text}
 
 # ── Data loading ──────────────────────────────────────────────────────────────
+_LOCAL_CSV = os.path.join(os.path.dirname(__file__), "imdb_10k.csv")
+
 @st.cache_data(show_spinner=False)
 def load_df(n: int) -> pd.DataFrame:
-    from datasets import load_dataset
-    ds = load_dataset("stanfordnlp/imdb", split="train+test", trust_remote_code=False)
-    df = pd.DataFrame({
-        "review":    ds["text"],
-        "sentiment": ["positive" if l == 1 else "negative" for l in ds["label"]],
-    })
+    df = pd.read_csv(_LOCAL_CSV)
     return df.iloc[:n] if n else df
 
 # ── Model pipeline ────────────────────────────────────────────────────────────
